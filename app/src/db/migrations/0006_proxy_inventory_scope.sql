@@ -1,0 +1,2 @@
+ALTER TABLE "proxies" ADD COLUMN "credential_scope" text DEFAULT 'account' NOT NULL;--> statement-breakpoint
+ALTER TABLE "proxies" ADD CONSTRAINT "proxies_credential_scope_check" CHECK ("proxies"."credential_scope" in ('inventory', 'account'));

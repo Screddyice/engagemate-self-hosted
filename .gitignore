@@ -1,0 +1,59 @@
+.worktrees/
+# Claude Harness - Ephemeral/Per-Session State
+.claude-harness/sessions/
+.claude-harness/memory/compaction-backups/
+.claude-harness/memory/working/
+
+# Claude Code - Local settings
+.claude/settings.local.json
+
+# Vendored agent skills (regenerable via `npx skills add`)
+.agents/
+.claude/skills/
+
+# Environment files (secrets — never commit)
+.env
+.env.*
+!.env*.example
+node_modules/
+**/node_modules/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+app/.next/
+api/.venv/
+playwright-report/
+test-results/
+.gstack/
+
+# Local agent tooling state. Machine-specific, regenerable, not project code.
+.claude-harness/
+.superpowers/
+
+# Local agent tooling, not part of the product
+CLAUDE.md
+skills-lock.json
+app/src/app/.claude/
+
+# Built extension archives. Reproducible from source; never committed.
+dist/
+
+.qa-verify-venv/
+
+# Owner runtime and sensitive local artifacts
+.venv/
+.codex/
+.hermes/
+artifacts/
+**/artifacts/
+*.har
+*.dump
+*.sqlite*
+*.db
+*auth.json
+*cookies.json
+*storage-state*.json
+*session*.log
+
+app/public/downloads/*.zip

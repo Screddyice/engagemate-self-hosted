@@ -1,0 +1,43 @@
+model:
+  default: REPLACE_WITH_YOUR_MODEL
+  provider: REPLACE_WITH_YOUR_PROVIDER
+toolsets: []
+tools:
+  # Scheduled runs call these five schemas directly; native search defers them.
+  tool_search:
+    enabled: "off"
+plugins:
+  enabled:
+    - engagemate-story-vision
+mcp_servers:
+  engagemate_execution:
+    url: http://127.0.0.1:8766/mcp
+    headers:
+      Authorization: Bearer ${ENGAGEMATE_EXECUTION_MCP_KEY}
+    # Leave room for the bounded follower discovery result and completion call.
+    timeout: 1260
+    connect_timeout: 10
+    supports_parallel_tool_calls: false
+    # FastMCP advertises these request families even when their catalogs empty.
+    # Native Hermes otherwise adds four unrelated utility tools to this server.
+    tools:
+      resources: false
+      prompts: false
+platform_toolsets:
+  api_server:
+    - mcp-engagemate_execution
+agent:
+  max_turns: 40
+  tool_use_enforcement: true
+# Keep the completion window above the bounded follower scan and its completion
+# call. The scan itself stops at 300 seconds and persists its cursor.
+timeouts:
+  tools:
+    sequential_call: 1320
+memory:
+  # The worker deletes every session after one scheduled run. Keep external
+  # memory and user profiles disabled so customer evidence cannot persist.
+  provider: ""
+  memory_enabled: false
+  user_profile_enabled: false
+_config_version: 29

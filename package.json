@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix app run dev -- --hostname 127.0.0.1",
+    "start": "npm --prefix app run start -- --port 3030 --hostname 127.0.0.1",
+    "build": "npm --prefix app run build",
+    "lint": "npm --prefix app run lint",
+    "test": "npm --prefix app test",
+    "setup": "python3 scripts/setup.py"
+  }
+}

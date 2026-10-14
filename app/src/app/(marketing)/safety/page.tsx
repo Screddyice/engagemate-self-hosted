@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Info() { return <main className="mx-auto max-w-xl p-8"><h1 className="text-2xl font-bold">Your EngageMate workspace</h1><p className="mt-4">Your machine stores your accounts, encrypted sessions and action receipts. Configure your own runtime and optional services. Warm-up, pacing and challenge stops apply to every account.</p><Link className="mt-6 block underline" href="/onboarding">Open setup</Link></main>; }

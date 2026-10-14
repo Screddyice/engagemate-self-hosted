@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EngageMate</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>EngageMate</h1>
+      <span id="auth-badge" class="badge badge-disconnected">Checking…</span>
+    </header>
+
+    <div id="status-msg" class="status-msg hidden" role="status"></div>
+
+    <section class="card" aria-labelledby="connection-label">
+      <p id="connection-label" class="card-label">Connection</p>
+      <div class="status-row">
+        <span class="status-key">Instagram</span>
+        <span id="ig-status" class="status-value">—</span>
+      </div>
+    </section>
+
+    <section class="card connect-card" aria-labelledby="connect-label">
+      <p id="connect-label" class="card-label">Connect Instagram</p>
+      <p class="connect-copy">
+        EngageMate will connect the Instagram account signed in to this browser.
+      </p>
+      <button id="connect-btn" class="btn btn-sync btn-block">Connect Instagram</button>
+      <p class="hint">
+        If Instagram asks you to sign in, finish on the Instagram tab. Your
+        password stays with Instagram.
+      </p>
+    </section>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>

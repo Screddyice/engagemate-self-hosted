@@ -1,0 +1,2 @@
+DROP INDEX "proxy_capacity_orders_provider_order_idx";--> statement-breakpoint
+CREATE UNIQUE INDEX "proxy_capacity_orders_provider_order_geo_idx" ON "proxy_capacity_orders" USING btree ("provider_order_id","country","region","city") WHERE "proxy_capacity_orders"."provider_order_id" is not null;

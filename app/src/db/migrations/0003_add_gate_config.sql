@@ -1,0 +1,2 @@
+ALTER TABLE "agent_configs" ADD COLUMN "banned_phrases" text[] DEFAULT '{}'::text[] NOT NULL;--> statement-breakpoint
+ALTER TABLE "agent_configs" ADD COLUMN "expected_language" text DEFAULT 'en' NOT NULL;

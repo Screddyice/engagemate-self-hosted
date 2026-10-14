@@ -1,0 +1,166 @@
+name: engagemate
+
+x-backend-build: &backend-build
+  context: .
+  dockerfile: api/Dockerfile
+
+services:
+  db:
+    mem_limit: 512m
+    pids_limit: 128
+    cpus: 1
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: engagemate
+      POSTGRES_USER: engagemate
+      POSTGRES_PASSWORD: ${ENGAGEMATE_DB_PASSWORD:?Run scripts/setup.py first}
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: ["engagemate-db:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U engagemate -d engagemate"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    # Guardrails (2026-08-25 spec). Measured RSS 223MiB; cap is
+    # peak + headroom so a runaway kills itself, not the host.
+    mem_limit: 768m
+    pids_limit: 256
+    cpus: 1.5
+    build:
+      context: ./app
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3030}
+    env_file: [deploy/.env.web]
+    environment:
+      DATABASE_URL: postgresql://engagemate:${ENGAGEMATE_DB_PASSWORD}@db:5432/engagemate
+      CONTROL_API_URL: http://api:8000
+      LOGIN_SERVICE_URL: http://login:8000
+    ports:
+      - "127.0.0.1:3030:3030"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3030/api/health').then(r=>{if(!r.ok)process.exit(1)})",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  api:
+    init: true
+    # The API now runs one serialized source-profile Chrome context. The
+    # database capture lock prevents multiple browsers competing for this cap.
+    mem_limit: 1024m
+    pids_limit: 256
+    cpus: 1.5
+    platform: linux/amd64
+    build: *backend-build
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    env_file: [deploy/.env.api]
+    ports:
+      - "127.0.0.1:13100:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3).read()",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  worker:
+    init: true
+    # Active Chromium Story workloads exceeded the former 768MiB cap.
+    # Bound one worker at 2GiB, including its browser subprocesses.
+    mem_limit: 2g
+    pids_limit: 256
+    cpus: 1.5
+    platform: linux/amd64
+    build: *backend-build
+    command: ["python", "-m", "engagemate.worker.main"]
+    env_file: [deploy/.env.api, deploy/.env.worker]
+    environment:
+      DATABASE_URL: postgresql://engagemate:${ENGAGEMATE_DB_PASSWORD}@127.0.0.1:5433/engagemate
+    # Linux only; on macOS run the worker natively so it reaches the local agent.
+    network_mode: host
+    stop_grace_period: 45s
+    # Failure diagnostics have to outlive the container that captured them, or
+    # the screenshot explaining a checkpoint is gone with the next rebuild.
+    # ARTIFACT_DIR must point inside this path for anything to be kept.
+    volumes:
+      - engagemate-artifacts:/srv/artifacts
+    deploy:
+      replicas: 1
+    restart: unless-stopped
+
+  scheduler:
+    # Guardrails (2026-08-25 spec). Measured RSS 29MiB; cap is
+    # peak + headroom so a runaway kills itself, not the host.
+    mem_limit: 256m
+    pids_limit: 128
+    cpus: 0.5
+    platform: linux/amd64
+    build: *backend-build
+    command: ["python", "-m", "engagemate.scheduler.main"]
+    env_file: [deploy/.env.api, deploy/.env.scheduler]
+    restart: unless-stopped
+
+  action-emails:
+    profiles: [email]
+    mem_limit: 256m
+    pids_limit: 64
+    cpus: 0.5
+    platform: linux/amd64
+    build: *backend-build
+    command: ["python", "-m", "engagemate.reports.actions"]
+    env_file: [deploy/.env.api]
+    restart: unless-stopped
+
+  login:
+    profiles: [browser-login]
+    # Two temporary Chrome instances maximum. No public port or durable files.
+    mem_limit: 1536m
+    pids_limit: 256
+    cpus: 1.5
+    platform: linux/amd64
+    build: *backend-build
+    command: ["uvicorn", "engagemate.hosted_login.app:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
+    env_file: [deploy/.env.api]
+    user: "10001:10001"
+    init: true
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      HOME: /tmp
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+    shm_size: 256m
+    stop_grace_period: 30s
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3).read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+volumes:
+  engagemate-db:
+  engagemate-artifacts:

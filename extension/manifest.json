@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "EngageMate — Instagram session bridge",
+  "version": "3.5.0",
+  "description": "Connect your Instagram account to EngageMate by carrying your signed-in session across. No password, no engagement.",
+  "permissions": [
+    "cookies",
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://*.instagram.com/*",
+    "https://instagram.com/*",
+    "http://localhost:3030/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost:3030/*"
+      ],
+      "js": [
+        "content-script.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

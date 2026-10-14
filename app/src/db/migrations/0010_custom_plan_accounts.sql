@@ -1,0 +1,2 @@
+ALTER TABLE "users" ADD COLUMN "purchased_accounts" integer;--> statement-breakpoint
+ALTER TABLE "users" ADD CONSTRAINT "users_purchased_accounts_check" CHECK ("users"."purchased_accounts" is null or "users"."purchased_accounts" between 16 and 100);

@@ -1,0 +1,224 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    background: var(--w-bg);
+    color: var(--w-t1);
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+  }
+}
+
+/* Landing page design tokens */
+:root {
+  --w-bg: #09090b;
+  --w-surface: #0c0c0f;
+  --w-card: rgba(255,255,255,0.025);
+  --w-card-hover: rgba(255,255,255,0.04);
+  --w-border: rgba(255,255,255,0.06);
+  --w-border-hover: rgba(255,255,255,0.1);
+  --w-border-active: rgba(59,130,246,0.25);
+  --w-t1: #ffffff;
+  --w-t2: #d4d4d8;
+  --w-t3: #d4d4d8;
+  --w-t4: #a1a1aa;
+  --w-blue: #3b82f6;
+  --w-blue-dim: rgba(59,130,246,0.12);
+  --w-red: #ef4444;
+  --w-red-light: #f87171;
+  --w-red-dim: rgba(239,68,68,0.1);
+  --w-red-border: rgba(239,68,68,0.15);
+  --w-green: #22c55e;
+  --w-green-dim: rgba(34,197,94,0.12);
+  --w-glass: inset 0 1px 0 rgba(255,255,255,0.04);
+  --w-amber: #fbbf24;
+  --w-amber-dim: rgba(251,191,36,0.14);
+  --w-nav: rgba(12,12,15,0.72);
+  --w-nav-scrolled: rgba(12,12,15,0.94);
+  --w-nav-border-scrolled: rgba(255,255,255,0.09);
+  --w-dot: rgba(255,255,255,0.055);
+  --w-display-from: #ffffff;
+  --w-display-to: rgba(255,255,255,0.6);
+  --w-terminal: rgba(0,0,0,0.45);
+  --w-shot-shadow: 0 30px 80px -20px rgba(0,0,0,0.8);
+}
+
+/*
+ * Light mode. Every marketing surface reads its color from the tokens above,
+ * so the theme is a token swap rather than a second set of components. The
+ * brand navy (#0d1b3e) carries text; the logo blue stays #2374f2 so the mark
+ * matches the brand sheet on white.
+ */
+:root[data-theme="light"] {
+  --w-bg: #ffffff;
+  --w-surface: #f7f8fa;
+  --w-card: rgba(13,27,62,0.022);
+  --w-card-hover: rgba(13,27,62,0.045);
+  --w-border: rgba(13,27,62,0.10);
+  --w-border-hover: rgba(13,27,62,0.16);
+  --w-border-active: rgba(35,116,242,0.35);
+  --w-t1: #0d1b3e;
+  --w-t2: #3d4a63;
+  --w-t3: #55627c;
+  --w-t4: #6b7688;
+  --w-blue: #2374f2;
+  --w-blue-dim: rgba(35,116,242,0.10);
+  --w-red: #dc2626;
+  --w-red-light: #ef4444;
+  --w-red-dim: rgba(220,38,38,0.06);
+  --w-red-border: rgba(220,38,38,0.18);
+  --w-green: #15803d;
+  --w-green-dim: rgba(21,128,61,0.09);
+  --w-amber: #b45309;
+  --w-amber-dim: rgba(180,83,9,0.10);
+  --w-glass: inset 0 1px 0 rgba(255,255,255,0.7);
+  --w-nav: rgba(255,255,255,0.78);
+  --w-nav-scrolled: rgba(255,255,255,0.95);
+  --w-nav-border-scrolled: rgba(13,27,62,0.14);
+  --w-dot: rgba(13,27,62,0.07);
+  --w-display-from: #0d1b3e;
+  --w-display-to: rgba(13,27,62,0.62);
+  --w-terminal: #0d1b3e;
+  --w-shot-shadow: 0 24px 60px -24px rgba(13,27,62,0.28);
+}
+
+/*
+ * The terminal panel stays dark in both themes — it depicts a console. It must
+ * therefore restore the dark text ramp, including --w-t1: without it the
+ * generated draft lines render in brand navy on near-black and disappear.
+ */
+:root[data-theme="light"] .em-terminal {
+  --w-t1: #ffffff;
+  --w-t2: #d4d4d8;
+  --w-t3: #d4d4d8;
+  --w-t4: #a1a1aa;
+  --w-border: rgba(255,255,255,0.10);
+  --w-green: #4ade80;
+  --w-amber: #fbbf24;
+  --w-glass: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/*
+ * Product screenshots follow the theme, because the app themes too. Both
+ * captures ship and CSS picks one: `display: none` plus loading="lazy" on the
+ * hidden variant means the browser does not fetch the one it will not show.
+ */
+.em-shot-light {
+  display: none;
+}
+:root[data-theme="light"] .em-shot-dark {
+  display: none;
+}
+:root[data-theme="light"] .em-shot-light {
+  display: contents;
+}
+
+@keyframes w-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+@keyframes w-wave {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-8deg); }
+  45% { transform: rotate(10deg); }
+  60% { transform: rotate(-4deg); }
+  75% { transform: rotate(6deg); }
+}
+@keyframes w-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes w-blink {
+  0%, 42%, 50%, 100% { transform: scaleY(1); }
+  45%, 47% { transform: scaleY(0.1); }
+}
+@keyframes w-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes w-dot-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 currentColor; }
+  50% { opacity: 0.7; box-shadow: 0 0 0 3px transparent; }
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--w-border-hover);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--w-t4);
+}
