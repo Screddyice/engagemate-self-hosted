@@ -1,0 +1,16 @@
+# Exact initial-commit exceptions for reviewed synthetic test fixtures,
+# the public Google signing fingerprint, and a cross-line empty-template match.
+# New commits and newly added credentials remain subject to scanning.
+aa7957e766f26446d5e36818e9ede2735dff93bf:api/Dockerfile:generic-api-key:9
+aa7957e766f26446d5e36818e9ede2735dff93bf:deploy/hermes/engagemate-agent/.env.example:generic-api-key:9
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/deploy/test_env_file_shell_safety.py:generic-api-key:39
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/worker/test_execution_mcp_auth.py:generic-api-key:8
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/worker/test_check_deadline.py:generic-api-key:163
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/worker/test_execution_mcp_protocol.py:generic-api-key:35
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/worker/test_execution_mcp_tools.py:generic-api-key:34
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/worker/test_hermes_execution_fixture_loop.py:generic-api-key:29
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/worker/test_hermes_story_vision_plugin.py:generic-api-key:289
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/worker/test_hermes_execution_readiness.py:generic-api-key:17
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/worker/test_story_identity.py:generic-api-key:35
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/worker/test_story_identity.py:generic-api-key:176
+aa7957e766f26446d5e36818e9ede2735dff93bf:tests/worker/test_story_identity.py:generic-api-key:184
