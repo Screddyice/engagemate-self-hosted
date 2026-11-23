@@ -1,0 +1,49 @@
+# Crow CI (Woodpecker-compatible) on Shawn's Mac, linux/arm64 agent.
+# Mirrors the "Backend tests" and "Web tests and build" jobs in .github/workflows/ci.yml.
+# The postgres service is a disposable database with a throwaway password; no real data.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+steps:
+  backend:
+    image: python:3.12-bookworm
+    depends_on: []
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGCLIENTENCODING: UTF8
+    commands:
+      - apt-get update -qq && apt-get install --yes -qq postgresql-client >/dev/null
+      - for i in $(seq 1 60); do pg_isready -h postgres -U postgres && break; sleep 1; done
+      - pg_isready -h postgres -U postgres
+      - python -m pip install -q -r api/requirements-test.txt
+      - python -m pytest -q
+
+  web:
+    image: node:22-bookworm
+    depends_on: []
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGCLIENTENCODING: UTF8
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/engagemate_ci
+      NEXT_PUBLIC_APP_URL: http://localhost:3030
+    commands:
+      - apt-get update -qq && apt-get install --yes -qq postgresql-client >/dev/null
+      - for i in $(seq 1 60); do pg_isready -h postgres -U postgres && break; sleep 1; done
+      - createdb engagemate_ci
+      - cd app
+      - npm ci
+      - npm test -- --run
+      - npm run build
+      - npx tsc --noEmit
+
+when:
+  event: [push, pull_request, manual]
