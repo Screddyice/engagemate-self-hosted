@@ -1,11 +1,11 @@
 # Crow CI (Woodpecker-compatible) on Shawn's Mac, linux/arm64 agent.
 # Mirrors the "Backend tests" and "Web tests and build" jobs in .github/workflows/ci.yml.
-# The postgres service is a disposable database with a throwaway password; no real data.
+# The postgres service is a disposable database with a throwaway password ("ci"); no real data.
 services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ci
 
 # Some tests connect to localhost:5432 explicitly (GitHub maps the service port to
 # localhost), so each step forwards its loopback port 5432 to the service with socat.
@@ -17,10 +17,17 @@ steps:
       PGHOST: postgres
       PGPORT: "5432"
       PGUSER: postgres
-      PGPASSWORD: postgres
+      PGPASSWORD: ci
       PGCLIENTENCODING: UTF8
     commands:
       - apt-get update -qq && apt-get install --yes -qq postgresql-client socat >/dev/null
+      # The extension runtime tests shell out to node, and the compose contract tests run
+      # `docker compose config` (no daemon needed). GitHub's runner has both preinstalled.
+      - curl -fsSL "https://nodejs.org/dist/v22.23.5/node-v22.23.5-linux-$(uname -m | sed 's/x86_64/x64/;s/aarch64/arm64/').tar.xz" | tar -xJ -C /usr/local --strip-components=1
+      - install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+      - echo "deb [signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable" > /etc/apt/sources.list.d/docker.list
+      - apt-get update -qq && apt-get install --yes -qq docker-ce-cli docker-compose-plugin >/dev/null
+      - node --version && docker compose version
       - for i in $(seq 1 60); do pg_isready -h postgres -U postgres && break; sleep 1; done
       - pg_isready -h postgres -U postgres
       - socat TCP-LISTEN:5432,bind=127.0.0.1,fork,reuseaddr TCP:postgres:5432 &
@@ -34,9 +41,9 @@ steps:
       PGHOST: postgres
       PGPORT: "5432"
       PGUSER: postgres
-      PGPASSWORD: postgres
+      PGPASSWORD: ci
       PGCLIENTENCODING: UTF8
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/engagemate_ci
+      DATABASE_URL: postgresql://postgres:ci@postgres:5432/engagemate_ci
       NEXT_PUBLIC_APP_URL: http://localhost:3030
     commands:
       - apt-get update -qq && apt-get install --yes -qq postgresql-client socat >/dev/null
