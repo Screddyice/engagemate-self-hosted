@@ -63,6 +63,12 @@ cd app && npx tsc --noEmit
 
 Database tests create throwaway databases using `PGHOST`/`PGPORT` and skip if PostgreSQL is unavailable. Never point tests at a database containing real account data. Run preflight, execution fixtures and bounded account-owned canaries before enabling Instagram actions.
 
+### CI
+
+Pull requests and pushes are checked by Crow CI, a Woodpecker-compatible server that runs on the maintainer's Mac. The pipeline in `.woodpecker.yaml` runs the same backend tests and web tests, build and type check as `.github/workflows/ci.yml`, against a disposable PostgreSQL 16 service. Its `ci/crow/...` status on the PR head commit is the merge check.
+
+The GitHub `CI` workflow starts with a `crow-gate` job that waits up to three minutes for that Crow status. If Crow reports, the GitHub test jobs are skipped. If it does not (for example, the Mac was asleep and missed the push), the GitHub jobs run as before and their result is the check. A manual run of the workflow always runs the GitHub jobs. When Crow fails for its own reasons (a dropped clone, a killed or timed-out run, Crow unreachable), the `Crow fallback` workflow (`.github/workflows/crow-fallback.yml`) reads the failed run from Crow's API and starts GitHub CI on the PR head; a failed check step does not trigger it. It needs a `CROW_TOKEN` repo secret and runs from the default branch, so it takes effect once merged.
+
 ## Privacy
 
 Only blank templates and synthetic fixtures belong in this repository. Owner access keys, agent authentication, Instagram sessions, browser profiles, screenshots, database backups and proxy credentials stay in ignored files on your machine. Read the [connection privacy disclosure](app/src/app/(marketing)/privacy/page.tsx) and [self-hosting guide](docs/self-hosting.md) before connecting an account.
